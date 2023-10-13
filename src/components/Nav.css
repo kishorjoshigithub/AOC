@@ -1,0 +1,30 @@
+.navbar-brand{
+  color: #fff !important; /* White text color */
+  font-weight: bold;
+}
+
+.btn{
+  margin-right: 3px;
+}
+.navbar{
+  border-radius: none;
+  background:#000;
+}
+
+.navbar-nav .nav-link {
+  color: #fff !important; /* White text color with !important to override Bootstrap styles */
+  font-weight: bold;
+}
+
+
+
+
+.btn {
+  color: #fff !important; /* White text color for buttons */
+  font-weight: bold;
+}
+
+/* Primary button */
+.btn-primary {
+  background-color: #007BFF; /* Blue background color for the "Signup" button */
+}
