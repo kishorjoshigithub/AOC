@@ -1,35 +1,32 @@
-import logo from './logo.svg';
-import {getDatabase , ref,set} from 'firebase/database'
-import { app } from './FirebaseConfig/Firebase';
-import './App.css';
-import Navbar from './components/Navbar'
 
-const db = getDatabase(app);
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Home from './components/Home';
+import Services from './components/Services';
+import Pricing from './components/Pricing';
+import About from './components/About';
+import './App.css';
+import Features from './components/Features';
+import Start from './components/Start';
+
 
 function App() {
-
-
-const pushData = ()=>{
-  set(ref(db,'user/kishor'),
-  {
-  id:1,
-  name:'Kishor',
-  age:22
-})
-}
-
   return (
-
-
-    <div className="App">
-      <Navbar/>
-      <div className='banner'>
-
-      
+    <Router>
+      <div className="App">
+        {/* Navbar should be rendered outside of the <Routes> */}
+        <Navbar />
+        
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/features" element={<Features />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/start" element={<Start />} />
+        </Routes>
       </div>
-     
-     
-    </div>
+    </Router>
   );
 }
 

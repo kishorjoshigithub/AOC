@@ -1,31 +1,70 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import './Nav.css';
-
+import React, { useEffect, useState } from 'react';
+import { NavLink,useLocation } from 'react-router-dom';
+import './nav.css';
+import logo from '../img/logo-img.png';
 
 const Navbar = () => {
-    return (
+  const [scrolling, setScrolling] = useState(false);
+  const location = useLocation();
 
-       
-        <nav className="navbar navbar-expand-lg navbar-light">
-        <div className="container-fluid">
-          <a className="navbar-brand" href="#">AOS</a>
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="#">HOME</a>
-              </li>
-            </ul>
-           <button type="btn" className="btn">LOGIN</button>
-           <button type="btn" className="btn btn-primary">SIGNUP</button>
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setScrolling(true);
+      } else {
+        setScrolling(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  // Check if the current location matches the specified prefixes
+  const shouldRenderNavbar = !location.pathname.startsWith('/dashboard') && !location.pathname.startsWith('/Admin');
+
+  return (
+    <div className='nav-container'>
+      {shouldRenderNavbar && (  // Conditional rendering of Navbar
+        <nav className={`navbar navbar-expand-lg ${scrolling ? 'scrolling' : ''}`}>
+          <div className="container-fluid">
+            <div className="logo-container">
+              <NavLink to='/'>
+                <img className="img-logo" src={logo} alt="logo" />
+              </NavLink>
+            </div>
+            <div className="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                <li className="nav-item">
+                  <NavLink to='/' className="nav-link active" aria-current="page">Home</NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink to='/services' className="nav-link active" aria-current="page">Services</NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink to='/features' className="nav-link active" aria-current="page">Features</NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink to='/pricing' className="nav-link active" aria-current="page">Pricing</NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink to='/about' className="nav-link active" aria-current="page">About</NavLink>
+                </li>
+              </ul>
+            </div>
+            <div className='btn-container'>
+              <NavLink to="/start">
+                <button className="btn btn-outline-primary circular-button">GO</button>
+              </NavLink>
+            </div>
           </div>
-        </div>
-      </nav>
-       
-
-    )
-}
+        </nav>
+      )}
+    </div>
+  );
+};
 
 export default Navbar;
-
-
