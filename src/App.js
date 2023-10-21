@@ -8,7 +8,7 @@ import About from './components/About';
 import './App.css';
 import Features from './components/Features';
 import Start from './components/Start';
-import Dashboard from './components/Dashboard';
+import UserDashboard from './components/UserDashboard';
 import Steps from './components/Steps';
 import DashboardHome from './components/DashboardHome';
 import Integration from './components/Integration';
@@ -16,7 +16,7 @@ import Notification from './components/Notification';
 import AddDomain from './components/AddDomain';
 import UploadImage from './components/UploadImage';
 import Users from './components/Users';
-import Admin from './components/Admin';
+import AdminDashboard from './components/AdminDashboard';
 
 
 function App() {
@@ -36,7 +36,7 @@ function App() {
 
 
 
-          <Route path="/dashboard" element={<Dashboard />}>
+          <Route path="/dashboard" element={<UserDashboard />}>
             <Route index element={<DashboardHome />} />
             <Route path="steps" element={<Steps />} />
             <Route path="integration" element={<Integration />} />
@@ -44,7 +44,7 @@ function App() {
             <Route path="addDomain" element={<AddDomain />} />
           </Route>
 
-          <Route path="/Admin" element={<Admin />}>
+          <Route path="/Admin" element={<AdminDashboard />}>
             <Route path="uploadImage" element={<UploadImage />} />
             <Route path="users" element={<Users />} />
           </Route>

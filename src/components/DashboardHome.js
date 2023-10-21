@@ -3,7 +3,9 @@ import React from 'react'
 const DashboardHome = () => {
   return (
     <div>
-        Dash Home
+        <h1>
+            DashboardHome
+        </h1>
       
     </div>
   )

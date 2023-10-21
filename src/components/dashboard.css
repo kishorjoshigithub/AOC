@@ -11,6 +11,7 @@
      background-color: #f3f5f9;
   }
   
+  
   .wrapper{
     display: flex;
     position: relative;
@@ -23,12 +24,11 @@
     padding: 30px 0px;
     position: fixed;
   }
-  
-  .wrapper .sidebar h2{
-    color: #fff;
-    text-transform: uppercase;
-    text-align: center;
-    margin-bottom: 30px;
+
+  .logo{
+    height: 60px;
+    margin-left: 40px;
+    
   }
   
   .wrapper .sidebar ul li{
@@ -48,7 +48,7 @@
   }
   
   .wrapper .sidebar ul li:hover{
-    background-color: #594f8d;
+    background-color: darkcyan;
   }
       
   .wrapper .sidebar ul li:hover a{
@@ -83,12 +83,13 @@
   }
   
   .wrapper .main_content .header{
-    padding: 30px;
+    padding: 50px;
     background: #594f8d;
     margin-left: 12px;
     color: #717171;
     border-bottom: 1px solid #e0e4e8;
     margin-top: 3px;
+    margin-bottom: 20px;
   }
   
   .wrapper .main_content .info{
@@ -96,6 +97,7 @@
     background-color: white;
     line-height: 25px;
     height: 100vh;
+    margin-left: 10px;
   }
   
   .wrapper .main_content .info div{
@@ -106,4 +108,9 @@
     .social_media{
       display: none !important;
     }
+  }
+  .dash-links{
+    align-items: center;
+    margin-top: 30px;
+
   }
