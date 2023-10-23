@@ -1,14 +1,13 @@
-import React from 'react'
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 const DashboardHome = () => {
+
   return (
     <div>
-        <h1>
-            DashboardHome
-        </h1>
-      
+     <h1>Home Dahboard</h1>
     </div>
-  )
-}
+  );
+};
 
-export default DashboardHome
+export default DashboardHome;

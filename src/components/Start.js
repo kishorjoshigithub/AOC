@@ -3,12 +3,16 @@ import './start.css';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { app } from '../FirebaseConfig/Firebase';
-import { getDatabase, ref, set } from 'firebase/database';
+import { get, getDatabase, ref, set } from 'firebase/database';
 import CryptoJS from 'crypto-js'; // Import crypto-js library
+import { useDispatch, useSelector } from 'react-redux';
+import { setRole, setUserData } from '../redux/Actions/userActions';
 
 
 
 const Start = () => {
+
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     // Define state for the Signup form
@@ -64,35 +68,51 @@ const Start = () => {
             setSignupErrorMessage('Please fill out all fields');
             return; // Prevent submission if fields are missing
         }
-    
+
         // Reset the error state
         setSignupFormError(false);
         setSignupErrorMessage('');
-    
+
         try {
             // Hash the password using crypto-js
             const hashedPassword = hashPassword(signupState.password);
-    
+
             const userCredential = await createUserWithEmailAndPassword(auth, signupState.email, hashedPassword);
             const user = userCredential.user;
             if (user) {
                 // User is authenticated, you can navigate or perform other actions here
                 console.log("User is authenticated:", user);
-    
+
                 // Create a unique user ID
                 const userId = user.uid;
-    
+
                 // Add the user data (including 'role' and hashed password) to the Firebase Realtime Database
                 const userRef = ref(db, 'users/' + userId);
                 await set(userRef, {
                     username: signupState.username,
                     email: signupState.email,
-                    role: 'USER_ROLE', // Set the initial role to 'user'
+                    role: 'ADMIN_ROLE', // Set the initial role to 'user'
                     password: hashedPassword, // Store the hashed password
                 });
-    
+
+                // Retrieve the role from Firebase and store it in Redux
+                const roleSnapshot = await get(db, 'users/' + userId + '/role');
+                const userRole = roleSnapshot.val();
+
+                // Dispatch the action to store user data in Redux
+                dispatch(
+                    setUserData({
+                        username: signupState.username,
+                        email: signupState.email,
+                        role: userRole, // Get the role from Firebase
+                        password: hashedPassword,
+                        userId: user.uid,
+                        // Include any other user data you want to store
+                    })
+                );
+
                 navigate('/start'); // Navigate after a successful signup
-    
+
                 // Clear the signup input fields
                 setSignupState({
                     username: '',
@@ -105,7 +125,7 @@ const Start = () => {
             setSignupErrorMessage(error.message);
         }
     };
-    
+
 
     // Function to handle Login form submission
     const handleLoginSubmit = async (e) => {
@@ -121,15 +141,18 @@ const Start = () => {
         setLoginErrorMessage('');
 
         try {
-
             const hashedLoginPassword = hashPassword(loginState.password);
 
             const userCredential = await signInWithEmailAndPassword(auth, loginState.email, hashedLoginPassword);
-            const user = userCredential.user; // Get the authenticated user
+            const user = userCredential.user;
+            // Get the authenticated user
             if (user) {
                 // User is authenticated, you can navigate or perform other actions here
                 console.log("User is authenticated:", user);
-                navigate('/dashboard');
+
+                navigate('/dashboard/app');
+
+
                 // Clear the login input fields
                 setLoginState({
                     email: '',
@@ -142,13 +165,14 @@ const Start = () => {
         }
     };
 
+
     return (
         <div className='form-container'>
             <div className="main">
                 <input type="checkbox" id="chk" aria-hidden="true" />
 
                 <div className="signup">
-                    <form  onSubmit={handleSignupSubmit}>
+                    <form onSubmit={handleSignupSubmit}>
                         <label htmlFor="chk" aria-hidden="true">Sign up</label>
                         {signupFormError && <p className="error-message">{signupErrorMessage}</p>}
                         <input
