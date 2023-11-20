@@ -24,7 +24,7 @@ const Navbar = () => {
   }, []);
 
   // Check if the current location matches the specified prefixes
-  const shouldRenderNavbar = !location.pathname.startsWith('/dashboard') && !location.pathname.startsWith('/Admin');
+  const shouldRenderNavbar = !location.pathname.startsWith('/dashboard') && !location.pathname.startsWith('/Admin')&&!location.pathname.startsWith('/unauthorized');
 
   return (
     <div className='nav-container'>

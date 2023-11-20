@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './start.css';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { app } from '../FirebaseConfig/Firebase';
 import { get, getDatabase, ref, set } from 'firebase/database';
 import CryptoJS from 'crypto-js'; // Import crypto-js library
@@ -91,25 +91,11 @@ const Start = () => {
                 await set(userRef, {
                     username: signupState.username,
                     email: signupState.email,
-                    role: 'ADMIN_ROLE', // Set the initial role to 'user'
-                    password: hashedPassword, // Store the hashed password
+                    role: 'USER_ROLE', 
+                    password: hashedPassword,
                 });
+               
 
-                // Retrieve the role from Firebase and store it in Redux
-                const roleSnapshot = await get(db, 'users/' + userId + '/role');
-                const userRole = roleSnapshot.val();
-
-                // Dispatch the action to store user data in Redux
-                dispatch(
-                    setUserData({
-                        username: signupState.username,
-                        email: signupState.email,
-                        role: userRole, // Get the role from Firebase
-                        password: hashedPassword,
-                        userId: user.uid,
-                        // Include any other user data you want to store
-                    })
-                );
 
                 navigate('/start'); // Navigate after a successful signup
 
@@ -125,6 +111,7 @@ const Start = () => {
             setSignupErrorMessage(error.message);
         }
     };
+
 
 
     // Function to handle Login form submission
@@ -145,12 +132,33 @@ const Start = () => {
 
             const userCredential = await signInWithEmailAndPassword(auth, loginState.email, hashedLoginPassword);
             const user = userCredential.user;
-            // Get the authenticated user
+
             if (user) {
                 // User is authenticated, you can navigate or perform other actions here
                 console.log("User is authenticated:", user);
 
-                navigate('/dashboard/app');
+                // Create a unique user ID
+                const userId = user.uid;
+
+                // Add the user data (including 'role' and hashed password) to the Firebase Realtime Database
+                const userRef = ref(db, 'users/' + userId);
+               // Add this line for debugging
+                
+                const snapshot = await get(userRef);
+                const userDataFromDatabase = snapshot.val();
+               if(userDataFromDatabase){
+                dispatch(
+                    setUserData({
+                      role: userDataFromDatabase.role,
+                      
+                    })
+                )
+               }
+               else{
+                console.log(" Not connected");
+               }
+              
+              navigate('/dashboard/app');
 
 
                 // Clear the login input fields

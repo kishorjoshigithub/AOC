@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 const DashboardHome = () => {
+  const userData = useSelector((state) => state.user.userData);
 
   return (
     <div>

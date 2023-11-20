@@ -1,5 +1,5 @@
 
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import Services from './components/Services';
@@ -15,18 +15,21 @@ import Notification from './components/Notification';
 import AddDomain from './components/AddDomain';
 import UploadImage from './components/UploadImage';
 import Users from './components/Users';
-import Dashboard from './components/Dashboard';
-
-
-
+import AdminDashboard from './components/AdminDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
+import Unauthorized from './components/Unauthorized';
+import UserDashboard from './components/UserDashboard';
+import { useSelector } from 'react-redux';
 function App() {
+  const userData = useSelector((state) => state.user.userData);
+  
+
   return (
     <Router>
       <div className="App">
         <Navbar />
 
         <Routes>
-
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
           <Route path="/pricing" element={<Pricing />} />
@@ -34,22 +37,35 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/start" element={<Start />} />
 
+          {userData && (
+            <Route
+              path="/dashboard"
+              element={
+                userData.role === 'USER_ROLE' ? (
+                  <ProtectedRoute element={<UserDashboard />} requiredRole="USER_ROLE" />
+                ) : (
+                  <ProtectedRoute element={<AdminDashboard />} requiredRole="ADMIN_ROLE" />
+                )
+              }
+            >
+
+              <Route path="app" element={<DashboardHome />} />
+              <Route path="steps" element={<Steps />} />
+              <Route path="integration" element={<Integration />} />
+              <Route path="notification" element={<Notification />} />
+              <Route path="addDomain" element={<AddDomain />} />
+            </Route>
+          )}
 
 
-          <Route path="/dashboard" element={<Dashboard />}>
-            <Route path='app' element={<DashboardHome />} />
-            <Route path="steps" element={<Steps />} />
-            <Route path="integration" element={<Integration />} />
-            <Route path="notification" element={<Notification />} />
-            <Route path="addDomain" element={<AddDomain />} />
-          </Route>
-
-          <Route path="/Admin" element={<Dashboard />}>
-            <Route path="uploadImage" element={<UploadImage />} />
-            <Route path="users" element={<Users />} />
-          </Route>
-
-
+          {userData && userData.role === 'ADMIN_ROLE' && (
+            <Route path="/Admin" element={<AdminDashboard />}>
+              <Route path="uploadImage" element={<UploadImage />} />
+              <Route path="users" element={<Users />} />
+            </Route>
+          )}
+          <Route path='/unauthorized' element={<Unauthorized />} />
+         
         </Routes>
       </div>
     </Router>
