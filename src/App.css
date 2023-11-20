@@ -12,7 +12,62 @@
   color: #61dafb;
 }
 
-/* Home component styling*/
+.table-container{
+  padding-right: 60px;
+}
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  position: absolute;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  height: 20vh;
+  width: 15%;
+  border: 2px solid white;
+  border-radius: 10px;
+  background-color: black;
+  transform: translateX(-50%);
+}
+.profile{
+  color: white;
+  margin-top: 10px;
+}
+
+.change-role{
+  height: 2vh;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1); 
+  backdrop-filter: blur(5px); 
+  z-index: 1000; 
+  pointer-events: none; 
+}
+
+.card.change-role-card-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 3px solid skyblue;
+  width: 35%;
+  height: 40vh;
+  background: black; 
+  z-index: 1001; 
+  pointer-events: auto; 
+}
+
+
+
+
 
 
 

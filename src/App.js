@@ -1,5 +1,4 @@
-
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import Services from './components/Services';
@@ -8,27 +7,44 @@ import About from './components/About';
 import './App.css';
 import Features from './components/Features';
 import Start from './components/Start';
-import Steps from './components/Steps';
-import DashboardHome from './components/DashboardHome';
-import Integration from './components/Integration';
-import Notification from './components/Notification';
-import AddDomain from './components/AddDomain';
-import UploadImage from './components/UploadImage';
-import Users from './components/Users';
-import AdminDashboard from './components/AdminDashboard';
+import Steps from './Dashboard-components/Steps';
+import DashboardHome from './Dashboard-components/DashboardHome';
+import Integration from './Dashboard-components/Integration';
+import Notification from './Dashboard-components/Notification';
+import AddDomain from './Dashboard-components/AddDomain';
+import UploadImage from './Dashboard-components/UploadImage';
+import Users from './Dashboard-components/Users';
+import AdminDashboard from './Dashboard-components/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import Unauthorized from './components/Unauthorized';
-import UserDashboard from './components/UserDashboard';
-import { useSelector } from 'react-redux';
-function App() {
-  const userData = useSelector((state) => state.user.userData);
-  
+import UserDashboard from './Dashboard-components/UserDashboard';
+import {useDispatch, useSelector } from 'react-redux';
+import Profile from './Dashboard-components/Profile';
 
+
+
+
+
+function App() {
+
+
+  const userData = useSelector((state) => state.user.userData);
+  const authenticated = useSelector((state) => state.auth.isAuthenticated);
+  const dispatch = useDispatch();
+  
+  
+  
+  
+ 
+ 
   return (
     <Router>
-      <div className="App">
-        <Navbar />
 
+      <div className="App">
+       
+        <Navbar />
+        
+      
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
@@ -36,8 +52,10 @@ function App() {
           <Route path="/features" element={<Features />} />
           <Route path="/about" element={<About />} />
           <Route path="/start" element={<Start />} />
-
-          {userData && (
+          
+          
+        
+          {userData ? (
             <Route
               path="/dashboard"
               element={
@@ -48,28 +66,46 @@ function App() {
                 )
               }
             >
-
               <Route path="app" element={<DashboardHome />} />
               <Route path="steps" element={<Steps />} />
               <Route path="integration" element={<Integration />} />
               <Route path="notification" element={<Notification />} />
               <Route path="addDomain" element={<AddDomain />} />
+              <Route path="profile" element={<Profile />} />
+              
             </Route>
+          ) : (
+            <Route path="/dashboard" element={<Navigate to="/404" />} />
           )}
 
-
-          {userData && userData.role === 'ADMIN_ROLE' && (
-            <Route path="/Admin" element={<AdminDashboard />}>
+          {userData && userData.role === 'ADMIN_ROLE' && !authenticated ? (
+            <Route path="/admin" element={<Navigate to="/404" />} />
+          ) : (
+            <Route path="/admin" element={<AdminDashboard />}>
               <Route path="uploadImage" element={<UploadImage />} />
               <Route path="users" element={<Users />} />
             </Route>
           )}
-          <Route path='/unauthorized' element={<Unauthorized />} />
-         
+
+          <Route path='/404' element={<Unauthorized />} />
+          <Route path="*" element={<Navigate to="/404" />} />
         </Routes>
+       
+
       </div>
+      
+
+      
+     
+     
+    
+     
+
+
     </Router>
+
   );
 }
+
 
 export default App;

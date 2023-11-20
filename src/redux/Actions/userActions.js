@@ -1,5 +1,4 @@
-// userActions.js
-// userActions.js
+
 
 export const setUserData = (userData) => {
     return {
@@ -10,4 +9,15 @@ export const setUserData = (userData) => {
     };
 };
 
+export const login = () => ({
+  type: 'LOGIN',
+  isAuthenticated: true,
+});
+export const logout = () => ({
+  type: 'LOGOUT',
+  isAuthenticated: false,
+});
+
+
+// In your Redux actions
   

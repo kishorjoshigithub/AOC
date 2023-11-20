@@ -1,0 +1,70 @@
+.options{
+    background-color: white;
+    color: black;
+}
+.notification{
+    width: 90%;
+    height: 7vh;
+    font-size: 20px;
+    margin-left: 20px;
+    margin-top: 20px;
+    border-radius: 5px;
+    background:transparent;
+    border: 1px solid white;
+    color:skyblue;
+    border: 2px solid skyblue;
+    
+}
+.uploadBtn{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    width:13%;
+    
+}
+
+.picture-container{
+    width: 90%;
+    height: 20vh;
+    background-color: aqua;
+    border-radius: 10px;
+    margin-left: 20px;
+}
+
+.labelStyle{
+    cursor: pointer;
+    font-size: 20px;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007BFF; 
+    color:#fff;
+    border-radius:5px;
+    width: 15%;
+
+    margin-right: auto;
+}
+
+.icons{
+    display: flex;
+    margin: 10px;
+    height: 8vh;
+    width: 5%;
+    border-radius: 7px;
+
+}
+
+.icon-card{
+    background: black;
+    border-radius: 10px;
+    
+    
+}
+
+.pagination-btn{
+    border-radius: 3px;
+    width: 20%;
+}
+

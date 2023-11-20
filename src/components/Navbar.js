@@ -6,7 +6,7 @@ import logo from '../img/logo-img.png';
 const Navbar = () => {
   const [scrolling, setScrolling] = useState(false);
   const location = useLocation();
-
+  
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 0) {
@@ -23,12 +23,13 @@ const Navbar = () => {
     };
   }, []);
 
-  // Check if the current location matches the specified prefixes
-  const shouldRenderNavbar = !location.pathname.startsWith('/dashboard') && !location.pathname.startsWith('/Admin')&&!location.pathname.startsWith('/unauthorized');
+  const shouldRenderNavbar = !location.pathname.startsWith('/dashboard')
+   && !location.pathname.startsWith('/admin')&& 
+   !location.pathname.startsWith('/404');
 
   return (
     <div className='nav-container'>
-      {shouldRenderNavbar && (  // Conditional rendering of Navbar
+      {shouldRenderNavbar && (  
         <nav className={`navbar navbar-expand-lg ${scrolling ? 'scrolling' : ''}`}>
           <div className="container-fluid">
             <div className="logo-container">

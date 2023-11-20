@@ -1,21 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './start.css';
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { app } from '../FirebaseConfig/Firebase';
 import { get, getDatabase, ref, set } from 'firebase/database';
-import CryptoJS from 'crypto-js'; // Import crypto-js library
+import CryptoJS from 'crypto-js'; 
 import { useDispatch, useSelector } from 'react-redux';
-import { setRole, setUserData } from '../redux/Actions/userActions';
+import { login, logout,setUserData } from '../redux/Actions/userActions';
+
+
+
 
 
 
 const Start = () => {
-
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
 
-    // Define state for the Signup form
+    const authenticated = useSelector((state) => state.auth.isAuthenticated);
+
+
+  
+
     const [signupState, setSignupState] = useState({
         username: '',
         email: '',
@@ -53,53 +60,49 @@ const Start = () => {
             [name]: value,
         });
     };
-
-    // Function to hash the password using crypto-js
     const hashPassword = (password) => {
         const hashedPassword = CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
         return hashedPassword;
     };
 
-    // Function to handle Signup form submission
+    
+   
+
+ 
     const handleSignupSubmit = async (e) => {
+
+
         e.preventDefault();
         if (!signupState.username || !signupState.email || !signupState.password) {
             setSignupFormError(true);
             setSignupErrorMessage('Please fill out all fields');
-            return; // Prevent submission if fields are missing
+            return; 
         }
 
-        // Reset the error state
+        
         setSignupFormError(false);
         setSignupErrorMessage('');
 
         try {
-            // Hash the password using crypto-js
-            const hashedPassword = hashPassword(signupState.password);
+           
+           
 
-            const userCredential = await createUserWithEmailAndPassword(auth, signupState.email, hashedPassword);
+            const userCredential = await createUserWithEmailAndPassword(auth, signupState.email, signupState.password);
             const user = userCredential.user;
             if (user) {
-                // User is authenticated, you can navigate or perform other actions here
+                await updateProfile(user, { displayName: signupState.username });
                 console.log("User is authenticated:", user);
-
-                // Create a unique user ID
                 const userId = user.uid;
-
-                // Add the user data (including 'role' and hashed password) to the Firebase Realtime Database
                 const userRef = ref(db, 'users/' + userId);
                 await set(userRef, {
                     username: signupState.username,
                     email: signupState.email,
-                    role: 'USER_ROLE', 
-                    password: hashedPassword,
+                    role: 'USER_ROLE',
+                    password: hashPassword(signupState.password),
                 });
-               
+                navigate('/start'); 
 
-
-                navigate('/start'); // Navigate after a successful signup
-
-                // Clear the signup input fields
+                
                 setSignupState({
                     username: '',
                     email: '',
@@ -111,8 +114,6 @@ const Start = () => {
             setSignupErrorMessage(error.message);
         }
     };
-
-
 
     // Function to handle Login form submission
     const handleLoginSubmit = async (e) => {
@@ -126,53 +127,57 @@ const Start = () => {
         // Reset the error state
         setLoginFormError(false);
         setLoginErrorMessage('');
+        console.log('Before authentication', authenticated);
 
         try {
-            const hashedLoginPassword = hashPassword(loginState.password);
-
-            const userCredential = await signInWithEmailAndPassword(auth, loginState.email, hashedLoginPassword);
+           
+            const userCredential = await signInWithEmailAndPassword(auth, loginState.email, loginState.password);
             const user = userCredential.user;
 
             if (user) {
-                // User is authenticated, you can navigate or perform other actions here
-                console.log("User is authenticated:", user);
-
-                // Create a unique user ID
+                const username = user.username;
                 const userId = user.uid;
-
-                // Add the user data (including 'role' and hashed password) to the Firebase Realtime Database
                 const userRef = ref(db, 'users/' + userId);
-               // Add this line for debugging
-                
                 const snapshot = await get(userRef);
                 const userDataFromDatabase = snapshot.val();
-               if(userDataFromDatabase){
-                dispatch(
-                    setUserData({
-                      role: userDataFromDatabase.role,
-                      
-                    })
-                )
-               }
-               else{
-                console.log(" Not connected");
-               }
-              
-              navigate('/dashboard/app');
+                console.log("User is authenticated:", user);
 
+                if (userDataFromDatabase) {
 
-                // Clear the login input fields
-                setLoginState({
-                    email: '',
-                    password: '',
-                });
+                    dispatch(
+                        setUserData({
+                            role: userDataFromDatabase.role,
+                            username: userDataFromDatabase.username,
+                            email: userDataFromDatabase.email,
+                        })
+                    );
+                    if (userDataFromDatabase.username) {
+                        updateProfile(user, { displayName: userDataFromDatabase.username });
+                    }
+
+                    dispatch(login());
+
+                    navigate('/dashboard/app');
+                }
             }
         } catch (error) {
             console.error(error.message);
-            setLoginErrorMessage('Login failed. Check your email and password.'); // Set a custom error message
+            setLoginErrorMessage('Login failed. Check your email and password.');
         }
     };
 
+    useEffect(() => {
+        if (authenticated && location.pathname === '/start') {
+            
+            const delayLogout = setTimeout(() => {
+                dispatch(logout());
+            }, 100); 
+            return () => clearTimeout(delayLogout);
+        }
+    }, [authenticated, dispatch, navigate, location]);
+
+
+    
 
     return (
         <div className='form-container'>
@@ -237,6 +242,12 @@ const Start = () => {
             </div>
         </div>
     );
+   
+   
+    
+   
+  
+
 }
 
 export default Start;
