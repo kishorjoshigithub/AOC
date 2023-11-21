@@ -1,2 +1,2 @@
-# AOS
+# AOC
 Push Notification Project
